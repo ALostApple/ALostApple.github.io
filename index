@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Avansat de Permutări</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-between font-sans selection:bg-indigo-500 selection:text-white relative">
+    <div class="w-full max-w-4xl mx-auto p-4 sm:p-6 flex-grow">
+        <header class="text-center my-8">
+            <h1 class="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-2">Calculator de Permutări</h1>
+            <p class="text-slate-400 text-sm sm:text-base">Instrument bomboclatic pentru operații cu permutări</p>
+        </header>
+
+        <div class="flex justify-center mb-8 border-b border-slate-800 pb-4">
+            <nav class="flex space-x-2 sm:space-x-4 bg-slate-800/60 p-1.5 rounded-xl backdrop-blur-sm border border-slate-700/50">
+                <button onclick="switchTab('power')" id="btn-power" class="px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">Ridicare la Putere</button>
+                <button onclick="switchTab('compose')" id="btn-compose" class="px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-700/50">Compunere</button>
+                <button onclick="switchTab('inverse')" id="btn-inverse" class="px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-700/50">Invers</button>
+            </nav>
+        </div>
+
+        <main class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-md">
+            <div id="tab-power" class="tab-content">
+                <h2 class="text-xl font-bold text-indigo-300 mb-4">Ridicarea unei permutări la putere</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-sm font-medium text-slate-300">Permutarea (ex: 2, 3, 1 sau 2 3 1)</label>
+                            <button onclick="randomizeField('power-perm')" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded border border-indigo-500/30 transition-colors">Random</button>
+                        </div>
+                        <input type="text" id="power-perm" placeholder="1, 2, 3, ..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-sm font-medium text-slate-300">Puterea (număr întreg pozitiv)</label>
+                            <button onclick="randomizePower('power-val')" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded border border-indigo-500/30 transition-colors">Random</button>
+                        </div>
+                        <input type="number" id="power-val" min="1" placeholder="ex: 3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                    <button onclick="calculatePower()" class="w-full mt-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all duration-200">Calculează</button>
+                </div>
+            </div>
+
+            <div id="tab-compose" class="tab-content hidden">
+                <h2 class="text-xl font-bold text-indigo-300 mb-4">Compunerea a două permutări (P₁ ∘ P₂)</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-sm font-medium text-slate-300">Permutarea 1 (P₁)</label>
+                            <button onclick="randomizeField('compose-perm1')" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded border border-indigo-500/30 transition-colors">Random</button>
+                        </div>
+                        <input type="text" id="compose-perm1" placeholder="1, 2, 3, ..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-sm font-medium text-slate-300">Permutarea 2 (P₂)</label>
+                            <button onclick="randomizeFieldWithSameN('compose-perm2', 'compose-perm1')" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded border border-indigo-500/30 transition-colors">Random (aceeași dimensiune)</button>
+                        </div>
+                        <input type="text" id="compose-perm2" placeholder="1, 2, 3, ..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                    <button onclick="calculateCompose()" class="w-full mt-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all duration-200">Calculează</button>
+                </div>
+            </div>
+
+            <div id="tab-inverse" class="tab-content hidden">
+                <h2 class="text-xl font-bold text-indigo-300 mb-4">Inversul unei permutări</h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-sm font-medium text-slate-300">Permutarea</label>
+                            <button onclick="randomizeField('inverse-perm')" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded border border-indigo-500/30 transition-colors">Random</button>
+                        </div>
+                        <input type="text" id="inverse-perm" placeholder="1, 2, 3, ..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                    </div>
+                    <button onclick="calculateInverse()" class="w-full mt-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-600/20 transition-all duration-200">Calculează</button>
+                </div>
+            </div>
+
+            <div id="result-container" class="mt-8 hidden border-t border-slate-700/60 pt-6">
+                <h3 class="text-lg font-semibold text-cyan-300 mb-3">Rezultat</h3>
+                <div id="error-message" class="hidden bg-rose-500/20 border border-rose-500/40 text-rose-300 px-4 py-3 rounded-lg mb-4 text-sm"></div>
+                <div id="success-result" class="space-y-3">
+                    <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-4">
+                        <span class="text-xs text-slate-400 block mb-1">Formă de șir (array):</span>
+                        <div id="res-array" class="font-mono text-lg text-emerald-400 font-bold tracking-wider"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button onclick="openModal()" class="fixed bottom-4 left-4 z-40 bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700/80 px-4 py-2.5 rounded-xl shadow-lg text-sm font-semibold transition-all duration-200 backdrop-blur-md">Afla mai multe</button>
+
+    <div id="info-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl relative text-center">
+            <p class="text-slate-200 font-medium mb-4 text-lg">considera urmatoarea informatie</p>
+            <div class="mb-6 flex justify-center">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRggofbBv_-G0CjcPcsmvmBNaVSWKKRhYuAzsyWuuo17A&s=10" alt="Informație" class="max-h-64 rounded-lg border border-slate-700 object-contain shadow-md">
+            </div>
+            <button onclick="closeModal()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition-colors">Închide</button>
+        </div>
+    </div>
+
+    <footer class="w-full text-center py-6 text-xs text-slate-500 border-t border-slate-800 mt-8">
+        Imi plac permutarile
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            
+            const buttons = ['power', 'compose', 'inverse'];
+            buttons.forEach(b => {
+                const btn = document.getElementById('btn-' + b);
+                if (b === tab) {
+                    btn.className = "px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+                } else {
+                    btn.className = "px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-700/50";
+                }
+            });
+            document.getElementById('result-container').classList.add('hidden');
+        }
+
+        function openModal() {
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        function parsePermutation(str) {
+            if (!str || !str.trim()) throw new Error("Câmpul nu poate fi gol.");
+            const parts = str.trim().split(/[\s,]+/).map(Number);
+            if (parts.length === 0 || parts.some(isNaN)) throw new Error("Format invalid. Introduceți numere separate prin virgulă sau spațiu.");
+            const n = parts.length;
+            const sorted = [...parts].sort((a, b) => a - b);
+            for (let i = 0; i < n; i++) {
+                if (sorted[i] !== i + 1) throw new Error("Permutarea nu este validă. Trebuie să conțină exact toate numerele de la 1 la n fără lipsuri sau repetiții.");
+            }
+            return parts;
+        }
+
+        function identity(n) {
+            const res = [];
+            for (let i = 1; i <= n; i++) res.push(i);
+            return res;
+        }
+
+        function compose(a, b) {
+            const n = a.length;
+            if (b.length !== n) throw new Error("Permutările trebuie să aibă aceeași dimensiune.");
+            const res = new Array(n);
+            for (let i = 0; i < n; i++) {
+                const valB = b[i];
+                res[i] = a[valB - 1];
+            }
+            return res;
+        }
+
+        function inverse(p) {
+            const n = p.length;
+            const res = new Array(n);
+            for (let i = 0; i < n; i++) {
+                const val = p[i];
+                res[val - 1] = i + 1;
+            }
+            return res;
+        }
+
+        function power(p, k) {
+            const n = p.length;
+            if (k === 0) return identity(n);
+            let base = [...p];
+            let exp = k;
+            let res = identity(n);
+            let curr = base;
+            while (exp > 0) {
+                if (exp % 2 === 1) {
+                    res = compose(res, curr);
+                }
+                curr = compose(curr, curr);
+                exp = Math.floor(exp / 2);
+            }
+            return res;
+        }
+
+        function randomPermutation(n) {
+            const arr = identity(n);
+            for (let i = n - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function randomizeField(elementId) {
+            let inputN = prompt("Introduceți numărul de elemente (n) pentru permutare:", "5");
+            if (inputN === null) return;
+            let n = parseInt(inputN);
+            if (isNaN(n) || n <= 0) {
+                alert("Număr de elemente invalid.");
+                return;
+            }
+            const perm = randomPermutation(n);
+            document.getElementById(elementId).value = perm.join(", ");
+        }
+
+        function randomizeFieldWithSameN(targetId, sourceId) {
+            const sourceVal = document.getElementById(sourceId).value.trim();
+            let n = 5;
+            if (sourceVal) {
+                try {
+                    const parsed = parsePermutation(sourceVal);
+                    n = parsed.length;
+                } catch(e) {}
+            }
+            const perm = randomPermutation(n);
+            document.getElementById(targetId).value = perm.join(", ");
+        }
+
+        function randomizePower(elementId) {
+            let p = Math.floor(Math.random() * 10) + 1;
+            document.getElementById(elementId).value = p;
+        }
+
+        function displayResult(arr) {
+            const container = document.getElementById('result-container');
+            const errDiv = document.getElementById('error-message');
+            const succDiv = document.getElementById('success-result');
+            
+            container.classList.remove('hidden');
+            errDiv.classList.add('hidden');
+            succDiv.classList.remove('hidden');
+
+            document.getElementById('res-array').textContent = arr.join(", ");
+        }
+
+        function displayError(msg) {
+            const container = document.getElementById('result-container');
+            const errDiv = document.getElementById('error-message');
+            const succDiv = document.getElementById('success-result');
+            
+            container.classList.remove('hidden');
+            errDiv.classList.remove('hidden');
+            succDiv.classList.add('hidden');
+
+            errDiv.textContent = msg;
+        }
+
+        function calculatePower() {
+            try {
+                const pStr = document.getElementById('power-perm').value;
+                const kStr = document.getElementById('power-val').value;
+                if (!kStr.trim()) throw new Error("Introduceți puterea.");
+                const p = parsePermutation(pStr);
+                const k = parseInt(kStr);
+                if (isNaN(k) || k < 0) throw new Error("Puterea trebuie să fie un număr întreg pozitiv.");
+                const res = power(p, k);
+                displayResult(res);
+            } catch (err) {
+                displayError(err.message);
+            }
+        }
+
+        function calculateCompose() {
+            try {
+                const p1Str = document.getElementById('compose-perm1').value;
+                const p2Str = document.getElementById('compose-perm2').value;
+                const p1 = parsePermutation(p1Str);
+                const p2 = parsePermutation(p2Str);
+                const res = compose(p1, p2);
+                displayResult(res);
+            } catch (err) {
+                displayError(err.message);
+            }
+        }
+
+        function calculateInverse() {
+            try {
+                const pStr = document.getElementById('inverse-perm').value;
+                const p = parsePermutation(pStr);
+                const res = inverse(p);
+                displayResult(res);
+            } catch (err) {
+                displayError(err.message);
+            }
+        }
+    </script>
+</body>
+</html>
