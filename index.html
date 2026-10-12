@@ -10,7 +10,7 @@
     <div class="w-full max-w-4xl mx-auto p-4 sm:p-6 flex-grow">
         <header class="text-center my-8">
             <h1 class="text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-2">Calculator de Permutări</h1>
-            <p class="text-slate-400 text-sm sm:text-base">Instrument robust pentru operații cu permutări (Ridicare la putere, Compunere, Invers)</p>
+            <p class="text-slate-400 text-sm sm:text-base">Instrument bomboclatic pentru operații cu permutări</p>
         </header>
 
         <div class="flex justify-center mb-8 border-b border-slate-800 pb-4">
@@ -110,26 +110,32 @@
     <script>
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tab).classList.remove('hidden');
+            const target = document.getElementById('tab-' + tab);
+            if (target) target.classList.remove('hidden');
             
             const buttons = ['power', 'compose', 'inverse'];
             buttons.forEach(b => {
                 const btn = document.getElementById('btn-' + b);
-                if (b === tab) {
-                    btn.className = "px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
-                } else {
-                    btn.className = "px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-700/50";
+                if (btn) {
+                    if (b === tab) {
+                        btn.className = "px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+                    } else {
+                        btn.className = "px-4 py-2 text-sm sm:text-base font-semibold rounded-lg transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-700/50";
+                    }
                 }
             });
-            document.getElementById('result-container').classList.add('hidden');
+            const resContainer = document.getElementById('result-container');
+            if (resContainer) resContainer.classList.add('hidden');
         }
 
         function openModal() {
-            document.getElementById('info-modal').classList.remove('hidden');
+            const modal = document.getElementById('info-modal');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeModal() {
-            document.getElementById('info-modal').classList.add('hidden');
+            const modal = document.getElementById('info-modal');
+            if (modal) modal.classList.add('hidden');
         }
 
         function parsePermutation(str) {
@@ -206,25 +212,28 @@
                 return;
             }
             const perm = randomPermutation(n);
-            document.getElementById(elementId).value = perm.join(", ");
+            const el = document.getElementById(elementId);
+            if (el) el.value = perm.join(", ");
         }
 
         function randomizeFieldWithSameN(targetId, sourceId) {
-            const sourceVal = document.getElementById(sourceId).value.trim();
+            const sourceEl = document.getElementById(sourceId);
             let n = 5;
-            if (sourceVal) {
+            if (sourceEl && sourceEl.value.trim()) {
                 try {
-                    const parsed = parsePermutation(sourceVal);
+                    const parsed = parsePermutation(sourceEl.value.trim());
                     n = parsed.length;
                 } catch(e) {}
             }
             const perm = randomPermutation(n);
-            document.getElementById(targetId).value = perm.join(", ");
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) targetEl.value = perm.join(", ");
         }
 
         function randomizePower(elementId) {
             let p = Math.floor(Math.random() * 10) + 1;
-            document.getElementById(elementId).value = p;
+            const el = document.getElementById(elementId);
+            if (el) el.value = p;
         }
 
         function displayResult(arr) {
@@ -232,11 +241,12 @@
             const errDiv = document.getElementById('error-message');
             const succDiv = document.getElementById('success-result');
             
-            container.classList.remove('hidden');
-            errDiv.classList.add('hidden');
-            succDiv.classList.remove('hidden');
+            if (container) container.classList.remove('hidden');
+            if (errDiv) errDiv.classList.add('hidden');
+            if (succDiv) succDiv.classList.remove('hidden');
 
-            document.getElementById('res-array').textContent = arr.join(", ");
+            const resArray = document.getElementById('res-array');
+            if (resArray) resArray.textContent = arr.join(", ");
         }
 
         function displayError(msg) {
@@ -244,17 +254,21 @@
             const errDiv = document.getElementById('error-message');
             const succDiv = document.getElementById('success-result');
             
-            container.classList.remove('hidden');
-            errDiv.classList.remove('hidden');
-            succDiv.classList.add('hidden');
-
-            errDiv.textContent = msg;
+            if (container) container.classList.remove('hidden');
+            if (errDiv) {
+                errDiv.classList.remove('hidden');
+                errDiv.textContent = msg;
+            }
+            if (succDiv) succDiv.classList.add('hidden');
         }
 
         function calculatePower() {
             try {
-                const pStr = document.getElementById('power-perm').value;
-                const kStr = document.getElementById('power-val').value;
+                const pEl = document.getElementById('power-perm');
+                const kEl = document.getElementById('power-val');
+                if (!pEl || !kEl) throw new Error("Elemente negăsite în pagină.");
+                const pStr = pEl.value;
+                const kStr = kEl.value;
                 if (!kStr.trim()) throw new Error("Introduceți puterea.");
                 const p = parsePermutation(pStr);
                 const k = parseInt(kStr);
@@ -268,8 +282,11 @@
 
         function calculateCompose() {
             try {
-                const p1Str = document.getElementById('compose-perm1').value;
-                const p2Str = document.getElementById('compose-perm2').value;
+                const p1El = document.getElementById('compose-perm1');
+                const p2El = document.getElementById('compose-perm2');
+                if (!p1El || !p2El) throw new Error("Elemente negăsite în pagină.");
+                const p1Str = p1El.value;
+                const p2Str = p2El.value;
                 const p1 = parsePermutation(p1Str);
                 const p2 = parsePermutation(p2Str);
                 const res = compose(p1, p2);
@@ -281,7 +298,9 @@
 
         function calculateInverse() {
             try {
-                const pStr = document.getElementById('inverse-perm').value;
+                const pEl = document.getElementById('inverse-perm');
+                if (!pEl) throw new Error("Elementul negăsit în pagină.");
+                const pStr = pEl.value;
                 const p = parsePermutation(pStr);
                 const res = inverse(p);
                 displayResult(res);
